@@ -1,4 +1,7 @@
 #include <boost/program_options.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>  /* String function definitions */
 #include <iostream>
 #include "include/easylogging++.h"
@@ -7,6 +10,13 @@
 using namespace std;
 
 _INITIALIZE_EASYLOGGINGPP
+obd2 * serial;
+
+void TimerFire(boost::asio::deadline_timer * t){
+    
+    t->expires_at(t->expires_at() + boost::posix_time::milliseconds(200));
+    t->async_wait(boost::bind(TimerFire,t));
+}
 
 int main(int argc, char ** argv){
     el::Configurations conf("opencanlog.log");
@@ -23,10 +33,14 @@ int main(int argc, char ** argv){
 
 
     if(vm.count("device")) {
-        obd2 serial(vm["device"].as<string>());
+        serial = new obd2(vm["device"].as<string>());
     } else {
         LOG(ERROR) << "No device specified";
     }
 
+    boost::asio::io_service io;
+    boost::asio::deadline_timer t(io,boost::posix_time::seconds(1));
+    t.async_wait(boost::bind(TimerFire,&t));
+    io.run();
     return 0;
 }

@@ -31,8 +31,10 @@ std::string obd2::getProtocol(){
 }
 
 void obd2::writePid(int mode, int pid){
+    char buf[5];
+    sprintf(buf,"%02d%02d",mode,pid);
     std::stringstream ss;
-    ss << mode << pid;
+    ss << buf;
     this->write(ss.str());
 }
 
