@@ -5,7 +5,7 @@ obd2::obd2(std::string port) : io(), serial(io,port){
     serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
     serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
     setProtocol(0);
-    LOG(INFO) << "Protocol detected: " << getProtocol();
+    LOG(INFO) << "Protocol selected: " << getProtocol();
 }
 
 /**
@@ -23,13 +23,13 @@ void obd2::setProtocol(int proto){
     this->write(ss.str());
     LOG(DEBUG) << readLine();
 
-    ss << "ATSP" << proto;
+    ss << "ATSP" << proto; // Set the protocol
     this->write(ss.str());
     LOG(DEBUG) << readLine();
 }
 
 std::string obd2::getProtocol(){
-    this->write("ATDP");
+    this->write("ATDP"); // Get the protocol
     return readLine();
 }
 
@@ -59,10 +59,10 @@ std::string obd2::readLine() {
                 break;
             case '\r':
                 return result;
-            case '\n':
-                return result;
             default:
                 result+=c;
         }
     }
 }
+
+
