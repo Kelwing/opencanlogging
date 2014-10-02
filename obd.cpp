@@ -14,10 +14,14 @@ obd2::obd2(std::string port) : io(), serial(io,port){
  */
 void obd2::setProtocol(int proto){
     std::stringstream ss;
-    ss << "ATZ";
+    ss << "ATZ"; // reset the device
     this->write(ss.str());
+    readLine();
     LOG(DEBUG) << readLine();
     ss.clear();
+    ss << "ATE0"; // Turn echo off (damn is this annoying)
+    this->write(ss.str());
+    LOG(DEBUG) << readLine();
 
     ss << "ATSP" << proto;
     this->write(ss.str());
