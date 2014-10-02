@@ -17,15 +17,12 @@ void obd2::setProtocol(int proto){
     ss << "ATZ"; // reset the device
     this->write(ss.str());
     readLine();
-    LOG(DEBUG) << readLine();
-    ss.clear();
+    ss.str("");
     ss << "ATE0"; // Turn echo off (damn is this annoying)
     this->write(ss.str());
-    LOG(DEBUG) << readLine();
-
-    ss << "ATSP" << proto; // Set the protocol
+    ss.str("");
+    ss << "ATSP" << proto;
     this->write(ss.str());
-    LOG(DEBUG) << readLine();
 }
 
 std::string obd2::getProtocol(){
