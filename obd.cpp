@@ -37,6 +37,7 @@ void obd2::writePid(int mode, int pid){
 
 void obd2::write(std::string s){
     LOG(DEBUG) << "Writing to serial: " << s;
+    s = s + '\r';
     boost::asio::write(serial,boost::asio::buffer(s.c_str(),s.size()));
 }
 
@@ -47,10 +48,13 @@ std::string obd2::readLine() {
     for(;;)
     {
         asio::read(serial,asio::buffer(&c,1));
+	//LOG(DEBUG) << c;
         switch(c)
         {
-            case '\r':
+            case '>':
                 break;
+            case '\r':
+                return result;
             case '\n':
                 return result;
             default:
