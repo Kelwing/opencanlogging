@@ -47,21 +47,17 @@ void obd2::write(std::string s){
 std::string obd2::readLine() {
     using namespace boost;
     char c;
+    int count;
     std::string result;
     for(;;)
     {
-        asio::read(serial,asio::buffer(&c,1));
-	//LOG(DEBUG) << c;
-        switch(c)
-        {
-            case '>':
-                break;
-            case '\r':
-                return result;
-            default:
-                result+=c;
-        }
+        count += asio::read(serial,asio::buffer(&c,1));
+        if(c == '>' && count > 0)
+            break;
+        else if(c != '>' && c != ' ')
+            result.append(&c, 1);
     }
+    return result;
 }
 
 
