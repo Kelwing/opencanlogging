@@ -20,7 +20,7 @@ void TimerFire(boost::asio::deadline_timer * t){
 }
 
 int main(int argc, char ** argv){
-    el::Configurations conf("opencanlog.log");
+    el::Configurations conf("../opencanlog.conf");
     el::Loggers::reconfigureAllLoggers(conf);
     LOG(INFO) << "Starting OpenCANLogging";
     namespace po = boost::program_options;
@@ -36,7 +36,8 @@ int main(int argc, char ** argv){
     if(vm.count("device")) {
         serial = new obd2(vm["device"].as<string>());
     } else {
-        LOG(ERROR) << "No device specified";
+        LOG(FATAL) << "No device specified";
+        exit(1);
     }
 
     boost::asio::io_service io;

@@ -4,6 +4,7 @@
 obd2::obd2(std::string port) : io(), serial(io,port){
     serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
     serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+    init();
     setProtocol(0);
     LOG(INFO) << "Protocol selected: " << getProtocol();
 }
@@ -13,19 +14,24 @@ obd2::obd2(std::string port) : io(), serial(io,port){
  * @param proto The protocol to set to, 0 for automatic
  */
 void obd2::setProtocol(int proto){
+    LOG(INFO) << "Setting protocol to " << proto;
     std::stringstream ss;
-    //ss << "ATZ"; // reset the device
-    //this->write(ss.str());
-    //readLine();
-    //ss.str("");
-    ss << "ATE0"; // Turn echo off (damn is this annoying)
-    this->write(ss.str());
-    readLine();
-//    while(readLine() != "OK") {sleep(1);}
-    ss.str("");
     ss << "ATSP" << proto;
     this->write(ss.str());
-    readLine();
+    LOG(DEBUG) << readLine();
+}
+
+void obd2::init(){
+    LOG(INFO) << "Initializing ELM device";
+    std::stringstream ss;
+    ss << "ATZ";
+    this->write(ss.str());
+    sleep(2);
+    LOG(DEBUG) << readLine();
+    ss.str("");
+    ss << "ATE0";  // Turn echo off
+    this->write(ss.str());
+    LOG(DEBUG) << readLine();
 }
 
 std::string obd2::getProtocol(){

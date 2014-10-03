@@ -7,6 +7,7 @@ class obd2 {
     public:
         obd2(std::string port);
         void setProtocol(int proto);
+        void init();
         std::string getProtocol();
         void writePid(int mode, int pid);
         void write(std::string s);
