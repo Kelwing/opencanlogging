@@ -13,7 +13,8 @@ _INITIALIZE_EASYLOGGINGPP
 obd2 * serial;
 
 void TimerFire(boost::asio::deadline_timer * t){
-    
+    serial->writePid(0x01, 0x0C);
+    LOG(INFO) << serial->readLine();    
     t->expires_at(t->expires_at() + boost::posix_time::milliseconds(200));
     t->async_wait(boost::bind(TimerFire,t));
 }

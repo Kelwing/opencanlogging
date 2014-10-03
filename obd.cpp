@@ -14,15 +14,18 @@ obd2::obd2(std::string port) : io(), serial(io,port){
  */
 void obd2::setProtocol(int proto){
     std::stringstream ss;
-    ss << "ATZ"; // reset the device
-    this->write(ss.str());
-    readLine();
-    ss.str("");
+    //ss << "ATZ"; // reset the device
+    //this->write(ss.str());
+    //readLine();
+    //ss.str("");
     ss << "ATE0"; // Turn echo off (damn is this annoying)
     this->write(ss.str());
+    readLine();
+//    while(readLine() != "OK") {sleep(1);}
     ss.str("");
     ss << "ATSP" << proto;
     this->write(ss.str());
+    readLine();
 }
 
 std::string obd2::getProtocol(){
@@ -32,7 +35,7 @@ std::string obd2::getProtocol(){
 
 void obd2::writePid(int mode, int pid){
     char buf[5];
-    sprintf(buf,"%02d%02d",mode,pid);
+    sprintf(buf,"%02X%02X",mode,pid);
     std::stringstream ss;
     ss << buf;
     this->write(ss.str());
@@ -55,9 +58,9 @@ std::string obd2::readLine() {
         switch(c)
         {
             case '>':
-                break;
-            case '\r':
                 return result;
+            case '\r':
+                break;
             default:
                 result+=c;
         }
