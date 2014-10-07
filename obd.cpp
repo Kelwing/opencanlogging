@@ -69,4 +69,36 @@ std::string obd2::readLine() {
     return result;
 }
 
+unsigned int reverseBits(unsigned int num)
+{
+    unsigned int  NO_OF_BITS = sizeof(num) * 8;
+    unsigned int reverse_num = 0, i, temp;
 
+    for (i = 0; i < NO_OF_BITS; i++)
+    {
+        temp = (num & (1 << i));
+        if(temp)
+            reverse_num |= (1 << ((NO_OF_BITS - 1) - i));
+    }
+
+    return reverse_num;
+}
+
+vector<int> dumpPids(){
+    string output;
+    writePid(0x01, 0x00);
+    output = readLine();
+    vector<int> pid_vector;
+    output = removeSpaces(output);
+    cout << "output " << output << endl;
+    long pids_available = stol(output, 0, 16);
+    int pid = 0x21;
+    for(int i = 0x00; i < 0x20; i++){
+        pid--;
+        if(((pids_available & (1 << i)) >> i) == 1){ 
+            pid_vector.push_back(pid);
+            cout << "Found param " << hex << pid << endl;
+        }
+    }
+    return pid_vector;
+}
